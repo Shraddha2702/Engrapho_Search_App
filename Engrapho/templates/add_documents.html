@@ -1,0 +1,13 @@
+<html>
+<head>
+  <title>Upload Documents</title>
+</head>
+<body>
+<form action="{{url_for('add_documents')}}" enctype="multipart/form-data" method="POST">
+  <input type="file" name="documents" multiple>
+  <input type="submit">
+</form>
+{% block content %}
+{% endblock %}
+</body>
+</html>
