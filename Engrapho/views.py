@@ -6,7 +6,7 @@ import os
 
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
-UPLOAD_FOLDER = ''
+UPLOAD_FOLDER = os.getcwd()+'\Files'
 ALLOWED_EXTENSIONS = ['docx', 'pptx', 'mp3', 'pdf', 'epub', 'djvu']
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["XML_FILE"]='project_index.xml'
@@ -92,10 +92,11 @@ def add_documents():
     if "logged_in" in session and session["logged_in"]:
         if request.method == "POST":
             for f in request.files.getlist("documents"):
-                location=app.config["UPLOAD_FOLDER"]+f.filename
+                location=os.path.join(app.config["UPLOAD_FOLDER"],f.filename)
+                print(location)
                 f.save(location)
                 extractData(location.split('.')[-1],location)
-            print("add is executed")
+                print("add is executed")
         return render_template('add_documents.html')
     else:
         return redirect(url_for('login'))
