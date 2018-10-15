@@ -6,7 +6,7 @@ import os
 
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
-UPLOAD_FOLDER = os.getcwd()+'\Files'
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'Files')
 ALLOWED_EXTENSIONS = ['docx', 'pptx', 'mp3', 'pdf', 'epub', 'djvu']
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["XML_FILE"]='project_index.xml'
@@ -17,7 +17,7 @@ def display():
     if 'messages' in session:
         content=session['messages']
         session['messages']=[]
-    return render_template('index.html', content=content)
+    return render_template('try1.html', content=content)
 
 @app.route('/login',methods=["POST","GET"])
 def login():

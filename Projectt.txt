@@ -1,0 +1,6 @@
+Project
+
+Create a Flask Application Offline
+Connect the MongoDB using PyMongo on local system
+Deploy the code on EC2 Instance
+Access it 
