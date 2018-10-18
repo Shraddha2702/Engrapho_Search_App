@@ -1,3 +1,13 @@
 <?xml version='1.0' encoding='ASCII'?>
 <database>
-<book><title/><author/><type extension="pdf"><location>D:\USC\Semester 1\INF551_Project\Engrapho\Files\Knowledge Graphs.pdf</location></type></book><book><title/><author/><type extension="pdf"><location>D:\USC\Semester 1\INF551_Project\Engrapho\Files\James Introduction to Statistical Learning.pdf</location></type></book><book><title>Genetic Algorithms and Machine Learning</title><author></author><type extension="pdf"><location>D:\USC\Semester 1\INF551_Project\Engrapho\Files\Goldberg-Holland1988_Article_GeneticAlgorithmsAndMachineLea.pdf</location></type></book></database>
+	<book><title/><author/><type extension="pdf">
+	<location>D:\USC\Semester 1\INF551_Project\Engrapho\Files\Knowledge Graphs.pdf</location></type>
+	</book>
+	<book><title/><author/><type extension="pdf">
+	<location>D:\USC\Semester 1\INF551_Project\Engrapho\Files\James Introduction to Statistical Learning.pdf</location></type>
+	</book>
+	<book><title>Genetic Algorithms and Machine Learning</title><author/><type extension="pdf">
+	<location>D:\USC\Semester 1\INF551_Project\Engrapho\Files\Goldberg-Holland1988_Article_GeneticAlgorithmsAndMachineLea.pdf</location></type>
+	</book>
+	<book><title>Data Structures and Algorithms in Java</title><author>NAP</author><type extension="pdf"><location>D:\USC\Semester 1\INF551_Project\Engrapho\Files\Data Structures and Algorithms in Java Fourth Edition.pdf</location></type></book>
+</database>
