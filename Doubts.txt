@@ -1,3 +1,2 @@
 Ask Bharath 
-1. ABout line 44. Tried changing cs
-rgergres in the templates/main.css. No changes!
+1. ABout line 44. Tried changing in the templates/main.css. No changes!
