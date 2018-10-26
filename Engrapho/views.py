@@ -2,24 +2,27 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug import secure_filename
 from lxml import etree
 from PyPDF2 import PdfFileReader
-import os
+import os, subprocess, sys
 
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'Files')
+UPLOAD_FOLDER ='Files'
 ALLOWED_EXTENSIONS = ['docx', 'pptx', 'mp3', 'pdf', 'epub', 'djvu']
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["XML_FILE"]='project_index.xml'
 
 @app.route('/',methods=["POST","GET"])
+
+#Display the search page.
 def display():
     content={}
     if 'messages' in session:
         content=session['messages']
-        session['messages']=[]
-    return render_template('try1.html', content=content)
+    return render_template('index.html', content=content)
 
 @app.route('/login',methods=["POST","GET"])
+
+#Display Login page.
 def login():
     if request.method == "POST":
         if request.form["username"]=="Bharath":
@@ -43,6 +46,7 @@ def search():
             name_as_author = xml_file.xpath("//book[author/text()='"+ search_item +"']/type[@extension='"+ fType +"']/location/text()")
             location.append(name_as_title)
             location.append(name_as_author)
+            print(location)
         session['messages']=location
     return redirect(url_for('display'))
 
@@ -84,8 +88,9 @@ def add_documents():
                 pdf_to_get = PdfFileReader(f)
                 file_info = pdf_to_get.getDocumentInfo()
                 print(file_info)
-                meta_data['author']=file_info['/Author']
-                meta_data['bookname']=file_info['/Title'] if '/Title' in file_info else os.path.basename(f.name)
+                meta_data['author']=file_info['/Author'] if '/Author' in file_info else ''
+                meta_data['bookname']=file_info['/Title'] if '/Title' in file_info else os.path.basename(f.name).split('.')[0]
+                print(meta_data)
 
         createOrUpdateBook(meta_data)
 

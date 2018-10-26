@@ -1,8 +1,0 @@
-Install flask on to your system before running the application.
-Then open the project directory in command prompt/terminal and execute the views.py program.
-Then open your  web browser and open http://127.0.0.1:5000/add to ADD the documents and check the XML file to see if the changes are applied.
-The http://127.0.0.1:5000/add page asks for login just give the username as "Bharath" no password and then click the button.
-Then open http://127.0.0.1:5000/ to search the files.
-If there is any error check the Files folder in the project folder to see if the files are uploaded.
-Constantly monitor the terminal for updates and errors.
-Contact me if to resolve errors.
