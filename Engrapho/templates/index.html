@@ -1,14 +1,53 @@
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="author" content="colorlib.com">
-    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
-    <link href="{{url_for('static',filename='main.css')}}" rel="stylesheet"/>
-  </head>
-  <body>
-    <div class="s003">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <meta name="author" content="colorlib.com">
+  <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
+  <link href="{{url_for('static',filename='main.css')}}" rel="stylesheet"/>
+  <!--<link href="main.css" rel="stylesheet"/>-->
+  <style>
+    /* Remove the navbar's default rounded borders and increase the bottom margin */
+    .navbar {
+      margin-bottom: 50px;
+      border-radius: 0;
+    }
+
+    /* Remove the jumbotron's default bottom margin */
+     .jumbotron {
+      margin-bottom: 0;
+      background: url('https://www.sciencenewsforstudents.org/sites/default/files/2017/05/main/blogposts/860_main_library_bacteria.png');
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment:fixed;
+      background-size: cover;
+    }
+    body {
+      padding: 10px;
+    }
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+  </style>
+
+</head>
+<body>
+
+<div class="jumbotron">
+  <div class="container text-center" style="padding: 0; background: rgba(255, 255, 255, 0.55)">
+    <h1>Engrapho</h1>
+    <p>Search Web Application</p>
+  </div>
+</div>
+
+<div class="s003" style="min-height: 0px; background-color: #fff">
       <form action="{{url_for('search')}}" method="POST">
         <div class="inner-form">
           <div class="input-field first-wrap">
@@ -28,30 +67,85 @@
             <input id="search" name="search" type="text" placeholder="Enter Keywords?" />
           </div>
           <div class="input-field third-wrap">
+            <a href="javascript:;" onclick="add_details()">
             <button class="btn-search" type="submit">
               <svg class="svg-inline--fa fa-search fa-w-16" aria-hidden="true" data-prefix="fas" data-icon="search" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                 <path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path>
               </svg>
             </button>
+          </a>
           </div>
         </div>
       </form>
+     </div>
+   <br>
 
+<form>
+<div class="container-fluid text-center">
+  <div class="row">
+    <div class="col-sm-2 well">
+      <p>Filters</p><br>
+      <div class="well">
+        <p><a href="#">Keywords</a></p>
+          <div class="checkbox" name="sub-topic">
+            <label><input type="checkbox" value="">Machine learning</label>
+          </div>
+          <div class="checkbox" name="sub-topic">
+            <label><input type="checkbox" value="">Deep Learning</label>
+          </div>
+          <div class="checkbox" name="sub-topic">
+            <label><input type="checkbox" value="" disabled>Supervised</label>
+          </div>
+          <div class="checkbox" name="sub-topic">
+            <label><input type="checkbox" value="" disabled>Genetic Algorithms</label>
+          </div>
+        </div>
+      <div class="well">
+        <p><a href="#">Authors</a></p>
+          <div class="checkbox" name="sub-author">
+            <label><input type="checkbox" value="">Goldberg Holland</label>
+          </div>
+          <div class="checkbox" name="sub-author">
+            <label><input type="checkbox" value="">James Wells</label>
+          </div>
+          <div class="checkbox" name="sub-author">
+            <label><input type="checkbox" value="" disabled>Ion Goodfellow</label>
+          </div>
+        </div>
+    </div>
+
+    <div class="col-sm-10 text-left">
+      <h3>Hello, Welcome to the Site!</h3>
+      <p>Here, are your search Query Results below.</p>
+      <p>You can also filter based on your requirements.</p>
+      <div class="list-group">
       {% for i in content %}
       <br>
-      <p>{{i[0]}}</p>
+      <a href="#" class="list-group-item">{{i[0]}}</a>
       {% endfor %}
+      </div>
     </div>
-    <script type="text/javascript" src="{{url_for('static',filename='choices.js')}}"></script>
-    <script>
-      const choices = new Choices('[data-trigger]',
-      {
-        searchEnabled: false,
-        itemSelectText: '',
-      });
+</div><br><br>
 
-    </script>
-    {% block content %}
-    {% endblock %}
-  </body>
+<script type="text/javascript" src="{{url_for('static',filename='choices.js')}}"></script>
+<script>
+  const choices = new Choices('[data-trigger]',
+  {
+    searchEnabled: false,
+    itemSelectText: '',
+  });
+</script>
+
+<script>
+function add_details(){
+alert('show');
+}
+</script>
+
+
+<footer class="container-fluid text-center">
+  <p>Shraddha Kulkarni | Bharath Chandra Thota </p>
+</footer>
+
+</body>
 </html>
