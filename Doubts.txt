@@ -1,2 +1,2 @@
-Ask Bharath 
+Ask Bharath
 1. ABout line 44. Tried changing in the templates/main.css. No changes!
