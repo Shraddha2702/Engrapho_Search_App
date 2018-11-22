@@ -91,7 +91,19 @@ def add_documents():
                 meta_data['bookname']=file_info['/Title'] if '/Title' in file_info else os.path.basename(f.name).split('.')[0]
                 print(meta_data)
         if extension=='docx' or extension=='docs' or extension=='doc':
-            #extracting data from docx
+            with open(location,'rb') as f:
+                # Do the stuff.
+                meta_data['author'] = None
+                meta_data['bookname'] = None
+
+        if extension=='mp3':
+            with open(location,'rb') as f:
+                # Do the stuff.
+                meta_data['author'] = None
+                meta_data['title'] = None
+
+        if extension=='png' or extension=='jpeg':
+            pass
 
 
         createOrUpdateBook(meta_data)
