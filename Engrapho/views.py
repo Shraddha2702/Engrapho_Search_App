@@ -9,11 +9,12 @@ app = Flask(__name__)
 app.secret_key = os.urandom(16)
 UPLOAD_FOLDER ='Files'
 ALLOWED_EXTENSIONS = ['docx', 'pptx', 'mp3', 'pdf', 'epub', 'djvu']
-#app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-#app.config["XML_FILE"]='project_index.xml'
-#g.db = MongoClient('localhost','27017').test_database
-#g.collection_main = g.db.test_collection()
-#g.collection_inverted = g.db.test_inverted_collection()
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["XML_FILE"]='project_index.xml'
+db = MongoClient('localhost',27017).test_database
+collection_main = db.test_collection
+collection_inverted = db.test_inverted_collection
 
 @app.route('/',methods=["POST","GET"])
 #Display the search page.
@@ -40,19 +41,22 @@ def search():
     if request.method == 'POST':
         #The search process is done here.
         search_items = request.form['search'].strip().split(' ')
+        print(search_items)
         ids=[]
         locations=[]
         file_types_selected = request.form.getlist('choices-single-defaul')
         for i in search_items:
-            cursor = g.collection_inverted.find({'index':i})
+            cursor = collection_inverted.find({'index':i})
             for j in cursor:
                 ids = ids+j['ids']
         ids = list(set(ids))
+        print(ids)
         for i in ids:
-            cursor = g.collection_main.find({'_id':i})
+            cursor = collection_main.find({'_id':i})
             for j in cursor:
                 locations.append(str(j['location']))
         session['messages']=locations
+        print(locations)
     return redirect(url_for('display'))
 
 @app.route('/add',methods=["POST","GET"])
@@ -60,17 +64,17 @@ def add_documents():
 
     # This function updates the inverted indexes file.
     def prepocess(meta_data, id):
-        indexes = meta_data['title'].split(' ') + meta_data['author'].split(' ') + meta_data['subtype'].split(' ')
+        indexes = meta_data['bookname'].split(' ') + meta_data['author'].split(' ') #+ meta_data['subtype'].split(' ')
         print("the indexes are", indexes)
         for i in indexes:
-            g.collection_inverted.update({'index':i},{'$push':{'ids':{'$each':[id]}}})
+            collection_inverted.update({'index':i},{'$push':{'ids':{'$each':[id]}}},True)
 
 
 
     # This function updates mongodb main file.
     def createOrUpdateBook(meta_data):
         #uploading to the main database.
-        id = g.collection_main.insert(meta_data)
+        id = collection_main.insert(meta_data)
         prepocess(meta_data, id)
 
 
@@ -90,18 +94,19 @@ def add_documents():
                 print(meta_data)
         if extension=='docx' or extension=='docs' or extension=='doc':
             with open(location,'rb') as f:
-                # Do the stuff.
-                meta_data['author'] = None
-                meta_data['bookname'] = None
+                zf = zipfile.ZipFile(location)
+                doc = lxml.etree.fromstring(zf.read('docProps/core.xml'))
+                ns = {'dc': 'http://purl.org/dc/elements/1.1/'}
+                if doc.xpath('//dc:creator', namespaces=ns)[0].text:
+                    meta_data['author'] = doc.xpath('//dc:creator', namespaces=ns)[0].text
+                else:
+                    meta_data['author'] = ''
+                if doc.xpath('//dc:title', namespaces=ns)[0].text:
+                    meta_data['bookname'] = doc.xpath('//dc:title', namespaces=ns)[0].text
+                else:
+                    meta_data['bookname'] = os.path.basename(meta_data['location']).split('.')[0]
 
-        if extension=='mp3':
-            with open(location,'rb') as f:
-                # Do the stuff.
-                meta_data['author'] = None
-                meta_data['title'] = None
 
-        if extension=='png' or extension=='jpeg':
-            pass
 
 
         createOrUpdateBook(meta_data)
