@@ -93,7 +93,7 @@ def main():
 
     topic = '+'.join(args.url.lower().split(' '))
 
-    path = os.path.join(os.getcwd(), 'Downloaded')
+    path = os.path.join(os.getcwd(), 'PDFs')
     if not os.path.exists(path):
         os.makedirs(path)
     

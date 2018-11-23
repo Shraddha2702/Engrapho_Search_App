@@ -94,7 +94,7 @@ def main():
 
     meta_data = dict()
     base_url = 'https://www.slideshare.net/'
-    output_folder = os.path.join(os.getcwd(), 'pptmakes')
+    output_folder = os.path.join(os.getcwd(), 'PPTs')
     images_folder = os.path.join(os.getcwd(), 'pptimages')
     
     if not os.path.exists(output_folder):
@@ -121,7 +121,7 @@ def main():
             v += 1
 
     return_dic = {'meta': meta_data}
-    with open('metadata_ppt.txt', 'w') as file:
+    with open('metadata_ppt.json', 'w') as file:
         file.write(json.dumps(return_dic))
 
 if __name__ == "__main__":
