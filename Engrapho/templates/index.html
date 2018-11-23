@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap Example</title>
+  <title>ENGRAPHO WEB APP</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -27,13 +27,30 @@
       background-attachment:fixed;
       background-size: cover;
     }
+
+    .s003 {
+        width: -webkit-fill-available;
+    }
+
+    .s003 form {
+    margin: auto;
+    width: 100%;
+    margin-bottom: 30px;
+    margin-top: 20px;
+    }
+
+    
     body {
       padding: 10px;
     }
     /* Add a gray background color and some padding to the footer */
     footer {
       background-color: #f2f2f2;
-      padding: 25px;
+      padding-left: : 25px;
+    }
+
+    .well {
+      text-align: left;
     }
   </style>
 
@@ -47,9 +64,9 @@
   </div>
 </div>
 
-<div class="s003" style="min-height: 0px; background-color: #fff">
-      <form action="{{url_for('search')}}" method="POST">
-        <div class="inner-form">
+<div class="s003" style="display: inline-block; min-height: 0px; background-color: #fff">
+      <form action="{{url_for('search')}}" method="POST" style="display: inline;">
+        <div class="inner-form" style="margin-bottom: 25px;">
           <div class="input-field first-wrap">
             <div class="input-select">
               <select data-trigger="" name="choices-single-defaul" multiple>
@@ -76,56 +93,73 @@
           </a>
           </div>
         </div>
-      </form>
-     </div>
+      <!--</form>
+
+      <form style="max-width: inherit;">-->
+        
+        <div class="container-fluid text-center">
+          <div class="row" style="display: flex;">
+
+            <div class="col-sm-2 well" style="width: auto;">
+              <h5>Filters</h5><br>
+              <div class="well">
+                <p><a href="#">Keywords</a></p>
+                  <div class="checkbox" name="sub-topic">
+                    <label><input type="checkbox" value="">Machine learning</label>
+                  </div>
+                  <div class="checkbox" name="sub-topic">
+                    <label><input type="checkbox" value="">Deep Learning</label>
+                  </div>
+                  <div class="checkbox" name="sub-topic">
+                    <label><input type="checkbox" value="" disabled>Supervised</label>
+                  </div>
+                  <div class="checkbox" name="sub-topic">
+                    <label><input type="checkbox" value="" disabled>Genetic Algorithms</label>
+                  </div>
+                </div>
+              <div class="well">
+                <p><a href="#">Authors</a></p>
+                  <div class="checkbox" name="sub-author">
+                    <label><input type="checkbox" value="">Goldberg Holland</label>
+                  </div>
+                  <div class="checkbox" name="sub-author">
+                    <label><input type="checkbox" value="">James Wells</label>
+                  </div>
+                  <div class="checkbox" name="sub-author">
+                    <label><input type="checkbox" value="" disabled>Ion Goodfellow</label>
+                  </div>
+                </div>
+            </div>
+
+            <div class="col-sm-8 text-left">
+              <h3>Hello, Welcome to the Site!</h3>
+              <p>Here, are your search Query Results below.</p>
+              <p>You can also filter based on your requirements.</p>
+
+              <div class='list-group'>
+                <a class="list-group-item">Content1</a>
+                <a class="list-group-item">Content2</a>
+                <a class="list-group-item">Content3</a>
+                <a class="list-group-item">Content4</a>
+              </div>
+
+              <div class="list-group">
+              {% for i in content %}
+              <br>
+              <a href="#" class="list-group-item">{{i[0]}}</a>
+              {% endfor %}
+              </div>
+            </div>
+
+             <div class="col-sm-2 text-left">
+              <h3> This is also a section (YOUTUBE SECTION)</h3>
+            </div>
+        </div><br><br>
+
+
+     </div></form>
    <br>
 
-<form>
-<div class="container-fluid text-center">
-  <div class="row">
-    <div class="col-sm-2 well">
-      <p>Filters</p><br>
-      <div class="well">
-        <p><a href="#">Keywords</a></p>
-          <div class="checkbox" name="sub-topic">
-            <label><input type="checkbox" value="">Machine learning</label>
-          </div>
-          <div class="checkbox" name="sub-topic">
-            <label><input type="checkbox" value="">Deep Learning</label>
-          </div>
-          <div class="checkbox" name="sub-topic">
-            <label><input type="checkbox" value="" disabled>Supervised</label>
-          </div>
-          <div class="checkbox" name="sub-topic">
-            <label><input type="checkbox" value="" disabled>Genetic Algorithms</label>
-          </div>
-        </div>
-      <div class="well">
-        <p><a href="#">Authors</a></p>
-          <div class="checkbox" name="sub-author">
-            <label><input type="checkbox" value="">Goldberg Holland</label>
-          </div>
-          <div class="checkbox" name="sub-author">
-            <label><input type="checkbox" value="">James Wells</label>
-          </div>
-          <div class="checkbox" name="sub-author">
-            <label><input type="checkbox" value="" disabled>Ion Goodfellow</label>
-          </div>
-        </div>
-    </div>
-
-    <div class="col-sm-10 text-left">
-      <h3>Hello, Welcome to the Site!</h3>
-      <p>Here, are your search Query Results below.</p>
-      <p>You can also filter based on your requirements.</p>
-      <div class="list-group">
-      {% for i in content %}
-      <br>
-      <a href="#" class="list-group-item">{{i[0]}}</a>
-      {% endfor %}
-      </div>
-    </div>
-</div><br><br>
 
 <script type="text/javascript" src="{{url_for('static',filename='choices.js')}}"></script>
 <script>

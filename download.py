@@ -8,26 +8,50 @@ import argparse
 from docx import Document
 from docx.shared import Inches
 import PyPDF2 as pypdf2
+import json
 
 HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'}
 
+
+#Name, Author, Year, Source, Type, Link
 
 def get_urls(url):
     request = requests.get(url, HEADERS)
     soup = BeautifulSoup(request.content, "html.parser")
 
+    meta_data = dict()
     urls = []
     names = []
+    authors = []
+    year = []
+    source = []
+    pdf_names = []
     base_url = os.path.dirname(url)
     i = 0
 
     for each in soup.findAll(class_='gs_rt'):
-    	names.append(each.find('a').get_text().replace(':', '').replace('?', '')+'.pdf')
+        pdf_names.append(each.find('a').get_text().replace(':', '').replace('?', '')+'.pdf')
+        names.append(each.find('a').get_text().replace(':', '').replace('?', ''))
+        
+    for each1 in soup.findAll(class_='gs_a'):
+        splits = each1.get_text().replace(':', '').replace('?', '').replace('\u2026', '').replace('\u00a0', '').replace('\u00ae', '').split('-')
+        authors.append(splits[0])
+        year.append(splits[1])
+        source.append(splits[2])
+
 
     for anchor in soup.findAll(class_='gs_or_ggsm'): #Going inside links
-        urls.append((names[i], anchor.find('a')['href']))
+        dd = {}
+        urls.append((anchor.find('a')['href'], pdf_names[i], names[i], authors[i],
+            year[i], source[i]))
+        dd['name'] = names[i]
+        dd['author'] = authors[i]
+        dd['year'] = year[i]
+        dd['source'] = source[i]
+        meta_data[names[i]] = dd
+
         i += 1
-    return urls
+    return urls, meta_data
 
 
 def convert_to_word(name):
@@ -43,7 +67,9 @@ def convert_to_word(name):
 def download(urls, path):
     old_dir = os.getcwd()
     os.chdir(path)
-    for name, url in urls:
+    for each in urls:
+        name = each[1]
+        url = each[0]
         if os.path.isfile(name):
             print("already exists, skipping...")
             continue
@@ -59,6 +85,8 @@ def download(urls, path):
 
 
 def main():
+    meta_data = dict()
+
     parser = argparse.ArgumentParser()
     parser.add_argument("url", help="Topic to Search on Google.")
     args = parser.parse_args()
@@ -70,14 +98,21 @@ def main():
         os.makedirs(path)
     
     for i in range(0, 30, 10):
-	    if(i == 0):
-	    	url = 'https://scholar.google.com/scholar?q='+topic+'+Research+papers&hl=en&as_sdt=0&as_vis=1&oi=scholart'
-	    else:
-	    	url = 'https://scholar.google.com/scholar?start='+str(i)+'&q='+topic+'Research+papers&hl=en&as_sdt=0,5&as_vis=1'
+        if(i == 0):
+            url = 'https://scholar.google.com/scholar?q='+topic+'+Research+papers&hl=en&as_sdt=0&as_vis=1&oi=scholart'
+        else:
+            url = 'https://scholar.google.com/scholar?start='+str(i)+'&q='+topic+'Research+papers&hl=en&as_sdt=0,5&as_vis=1'
 
-	    print(url)
-	    download(get_urls(url), path)
-	    print('\n')
+        print(url)
+        urls, meta_d = get_urls(url)
+        download(urls, path)
+        meta_data = dict(meta_data, **meta_d)
+        print('\n')
+
+    return_dic = {"meta": meta_data}
+    with open('metadata_pdf.txt', 'w') as file:
+        file.write(json.dumps(return_dic))
 
 if __name__ == "__main__":
     main()
+

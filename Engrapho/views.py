@@ -9,14 +9,13 @@ app = Flask(__name__)
 app.secret_key = os.urandom(16)
 UPLOAD_FOLDER ='Files'
 ALLOWED_EXTENSIONS = ['docx', 'pptx', 'mp3', 'pdf', 'epub', 'djvu']
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-app.config["XML_FILE"]='project_index.xml'
-g.db = MongoClient('localhost','27017').test_database
-g.collection_main = g.db.test_collection()
-g.collection_inverted = g.db.test_inverted_collection()
+#app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+#app.config["XML_FILE"]='project_index.xml'
+#g.db = MongoClient('localhost','27017').test_database
+#g.collection_main = g.db.test_collection()
+#g.collection_inverted = g.db.test_inverted_collection()
 
 @app.route('/',methods=["POST","GET"])
-
 #Display the search page.
 def display():
     content={}
@@ -24,8 +23,8 @@ def display():
         content=session['messages']
     return render_template('index.html', content=content)
 
-@app.route('/login',methods=["POST","GET"])
 
+@app.route('/login',methods=["POST","GET"])
 #Display Login page.
 def login():
     if request.method == "POST":
@@ -36,7 +35,6 @@ def login():
 
 
 @app.route('/search', methods=["POST", "GET"])
-
 # This function searches for the given keyword.
 def search():
     if request.method == 'POST':

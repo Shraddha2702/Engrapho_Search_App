@@ -817,7 +817,7 @@ legend {
   -ms-flex-pack: center;
       justify-content: center;
   -ms-flex-align: center;
-      align-items: center;
+  align-items: center;
   font-family: 'Poppins', sans-serif;
   background-color: #a598ee;
   background-size: cover;
@@ -827,7 +827,6 @@ legend {
 
 .s003 form {
   width: 100%;
-  max-width: 790px;
   margin-bottom: 0;
 }
 
@@ -836,6 +835,7 @@ legend {
   display: -ms-flexbox;
   display: flex;
   width: 100%;
+  margin-bottom: 25px;
   -ms-flex-pack: justify;
       justify-content: space-between;
   -ms-flex-align: center;
