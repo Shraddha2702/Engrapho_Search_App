@@ -15,7 +15,7 @@ HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KH
 
 #Name, Author, Year, Source, Type, Link
 
-def get_urls(url, location):
+def get_urls(url):
     request = requests.get(url, HEADERS)
     soup = BeautifulSoup(request.content, "html.parser")
 
@@ -39,7 +39,7 @@ def get_urls(url, location):
         year.append(splits[1])
         source.append(splits[2])
 
-        
+
     for anchor in soup.findAll(class_='gs_or_ggsm'): #Going inside links
         dd = {}
         urls.append((anchor.find('a')['href'], pdf_names[i], names[i], authors[i],
@@ -48,9 +48,6 @@ def get_urls(url, location):
         dd['author'] = authors[i]
         dd['year'] = year[i]
         dd['source'] = source[i]
-        dd['language'] = 'English'
-        dd['type'] = 'pdf'
-        dd['link'] = os.path.join(location, pdf_names[i]) ################################## CHANGE
         meta_data[names[i]] = dd
 
         i += 1
@@ -107,13 +104,13 @@ def main():
             url = 'https://scholar.google.com/scholar?start='+str(i)+'&q='+topic+'Research+papers&hl=en&as_sdt=0,5&as_vis=1'
 
         print(url)
-        urls, meta_d = get_urls(url, path)
+        urls, meta_d = get_urls(url)
         download(urls, path)
         meta_data = dict(meta_data, **meta_d)
         print('\n')
 
     return_dic = {"meta": meta_data}
-    with open('metadata_pdf.json', 'w') as file:
+    with open('metadata_pdf.txt', 'w') as file:
         file.write(json.dumps(return_dic))
 
 if __name__ == "__main__":

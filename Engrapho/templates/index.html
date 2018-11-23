@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>ENGRAPHO WEB APP</title>
+  <title>Engrapho Web App</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -51,6 +51,11 @@
 
     .well {
       text-align: left;
+    }
+
+    .card-img-top {
+      height: 150px;
+      width: 350px;
     }
   </style>
 
@@ -131,13 +136,22 @@
                 </div>
             </div>
 
-            <div class="col-sm-8 text-left">
-              <h3>Hello, Welcome to the Site!</h3>
+            <div class="col-sm-6 text-left">
               <p>Here, are your search Query Results below.</p>
               <p>You can also filter based on your requirements.</p>
 
               <div class='list-group'>
-                <a class="list-group-item">Content1</a>
+
+
+                <div class="list-group-item">
+                  <h4><a href='#'>Title of the Book/Paper</a></h4>
+                  <h4><small>by Author</small></h4>
+                  <small>Type</small><br>
+                  <small>Language</small><br>
+                  <small>Source</small><br>
+                </div>
+
+
                 <a class="list-group-item">Content2</a>
                 <a class="list-group-item">Content3</a>
                 <a class="list-group-item">Content4</a>
@@ -151,8 +165,19 @@
               </div>
             </div>
 
-             <div class="col-sm-2 text-left">
-              <h3> This is also a section (YOUTUBE SECTION)</h3>
+             <div class="col-sm-4">
+              <h5>Youtube Search Results</h5>
+
+
+              <div class="card">
+                    <img class="card-img-top" src="https://i.ytimg.com/vi/54XHDUOHuzU/hqdefault.jpg" alt="Click to go to the Link"> <!-- thumbnail_url -->
+                    <div class="card-block p-3"> 
+                        <h5 class="card-title"><a href='http://www.youtube.com/watch?v=54XHDUOHuzU'>Future Crew - Second Reality demo - HD</a></h5> <!-- title & href=url-->
+                        <p class="card-text">Pascal Brax</p> <!-- author_name -->
+                    </div>
+                </div>
+
+
             </div>
         </div><br><br>
 

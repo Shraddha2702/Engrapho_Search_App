@@ -29,7 +29,7 @@ def get_webpage_links(url, base_url):
     return urls
 
 
-def download_images(output_folder, HEADERS, url, name):
+def download_images(opf, output_folder, HEADERS, url, name):
     request = requests.get(url, HEADERS)
     soup = BeautifulSoup(request.content, 'html.parser')
     images = soup.findAll('img', {'class':'slide_image'})
@@ -46,8 +46,11 @@ def download_images(output_folder, HEADERS, url, name):
 
     meta_data['year'] = 'N/A'
     meta_data['source'] = 'LinkedIn Slideshare'
+    meta_data['type'] = 'ppt'
+    meta_data['language'] = 'English'
+    meta_data['link'] = opf
     dd[meta_data['name']] = meta_data
-
+    
     i = 0
     for image in images:
         try:
@@ -113,7 +116,7 @@ def main():
         v = 1
         for each in urls:
             print(each[0])
-            meta_d = download_images(images_folder, HEADERS, each[0], each[1])
+            meta_d = download_images(os.path.join(output_folder, each[1]+'.pptx'), images_folder, HEADERS, each[0], each[1])
             meta_data = dict(meta_data, **meta_d)
             convert_images_to_ppt(output_folder, images_folder, each[1]+'.pptx')
             delete_images(images_folder)

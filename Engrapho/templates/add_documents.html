@@ -1,11 +1,41 @@
 <html>
 <head>
   <title>Upload Documents</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="author" content="colorlib.com">
+	<link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
+    <link href="{{url_for('static',filename='main.css')}}" rel="stylesheet"/>
+
+
+  <style type="text/css">
+      body {
+      background: url('https://www.sciencenewsforstudents.org/sites/default/files/2017/05/main/blogposts/860_main_library_bacteria.png');
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment:fixed;
+      background-size: cover;
+      text-align: center;
+    }
+
+    form {
+    	display: inline-grid; 
+    	align-items: center;
+    	background: rgba(255, 255, 255, 0.55); 
+    	padding-left: 20px; 
+    	padding-right: 20px; 
+    	padding-bottom: 20px; 
+    	margin-top: 15%; 
+    	width: 50%
+    }
+    </style>
 </head>
 <body>
 <form action="{{url_for('add_documents')}}" enctype="multipart/form-data" method="POST">
-  <input type="file" name="documents" multiple>
-  <input type="submit">
+	<h2>Upload Documents</h2>
+  <input type="file" name="documents" multiple style="padding: 5px">
+  <input type="submit" style="padding: 8px">
 </form>
 {% block content %}
 {% endblock %}
