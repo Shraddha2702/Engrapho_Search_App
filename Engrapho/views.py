@@ -4,6 +4,11 @@ from lxml import etree
 from PyPDF2 import PdfFileReader
 from pymongo import MongoClient
 import os, subprocess, sys, docx
+import requests
+from bs4 import BeautifulSoup
+import micawber
+
+from fetch_youtube_ebook_links import *
 
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
@@ -24,7 +29,10 @@ def display():
         content['messages']=session['messages']
         content['extensions']=session['extensions']
         content['authors']=session['authors']
-    print(content)
+        content['youtube']=session['youtube']
+        content['ebook']=session['ebook']
+        content['sources']=session['sources']
+    #print(content)
     return render_template('index.html', content=content)
 
 
@@ -43,6 +51,7 @@ def login():
 def search():
     if request.method == 'POST':
         #The search process is done here.
+        term = request.form['search'].strip()
         search_items = request.form['search'].strip().split(' ')
         print(search_items)
         print('---------------'+"extensions"+'----------------')
@@ -84,13 +93,51 @@ def search():
         session['extensions']=list(extensions)
         session['authors']=list(authors)
         
+        sources = []
+        for i in range(len(session['messages'])):
+            if(session['messages'][i]['extension'] == 'pdf'):
+                sources.append('Google Scholar')
+                session['messages'][i]['source'] = 'Google Scholar'
+            else:
+                sources.append('LinkedIn Slideshare')
+                session['messages'][i]['source'] = 'LinkedIn Slideshare'
 
-        #################################### --------------- also, if type='pdf' session['source'] = 'Google Scholar'
-        #################################### --------------- type='ppt' session['source'] = 'LinkedIn'
-        #################################### --------------- Need to work on eBook and Youtube section
+        session['sources']=list(set(sources))
+
+        ############YOUTUBE AND EBOOK PART
+        topic = '+'.join(term.lower().split(' '))
+
+        base_url = 'https://youtube.com'
+        youtube_url = 'https://www.youtube.com/results?search_query='+topic
+        dic_yt = youtube_inf(youtube_url, base_url)
+        print('youtube added to Session')
+        session['youtube'] = dic_yt
+
+        base_url2 = 'https://worldcat.org'
+        ebook_url = 'https://www.worldcat.org/search?qt=worldcat_org_all&q='+topic+'#%2528x0%253Abook%2Bx4%253Adigital%2529format' 
+        dic_ebook = ebook_inf(ebook_url, base_url2)
+        print('ebook added to Session')
+        session['ebook'] = dic_ebook
+        session['messages'] += dic_ebook
+
+        book = list(set([each['extension'] for each in dic_ebook]))
+        for one in book:
+            session['extensions'].append(one)
+
+        autt = list(set([each['author'] for each in dic_ebook]))
+        for two in autt:
+            session['authors'].append(two)
+
+        sour = list(set(each['source'] for each in dic_ebook))
+        for three in sour:
+            session['sources'].append(three)
+
+        #################################### --------------- Add PPT Section and
+        #################################### --------------- Replace Empty string with 'Not Available'
         print('---'*10+'messages')
-        print(session['messages'])
-        print('--'*10)
+        #print(session['messages'])
+        #print('--'*10)
+        print('Session done === Sending')
     return redirect(url_for('display'))
 
 @app.route('/add',methods=["POST","GET"])

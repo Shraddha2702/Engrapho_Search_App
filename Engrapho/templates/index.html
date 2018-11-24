@@ -54,8 +54,8 @@
     }
 
     .card-img-top {
-      height: 150px;
-      width: 350px;
+      height: 50%;
+      width: 50%;
     }
   </style>
 
@@ -92,16 +92,26 @@
         <div class="container-fluid text-center">
           <div class="row" style="display: flex;">
 
-            <div class="col-sm-2 well" style="width: auto;">
+            <div class="col-sm-2 well">
               <h5>Filters</h5><br>
               <div class="well">
-                <p><a href="#">Keywords</a></p>
+                <p><a href="#">File Type</a></p>
                 {% for i in content['extensions'] %}
                   <div class="checkbox" name="sub-extensions">
                     <label><input type="checkbox" value="{{i}}" name="extensions">{{i}}</label>
                   </div>
                   {% endfor %}
                 </div>
+
+                <div class="well">
+                <p><a href="#">Sources</a></p>
+                {% for i in content['sources'] %}
+                  <div class="checkbox" name="sub-sources">
+                    <label><input type="checkbox" value="{{i}}" name="sources">{{i}}</label>
+                  </div>
+                  {% endfor %}
+                </div>
+
               <div class="well">
                 <p><a href="#">Authors</a></p>
                 {% for i in content['authors'] %}
@@ -112,7 +122,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 text-left">
+            <div class="col-sm-7 text-left">
               <p>Here, are your search Query Results below.</p>
               <p>You can also filter based on your requirements.</p>
 
@@ -120,28 +130,31 @@
 
                 {% for i in content['messages'] %}
                 <div class="list-group-item">
-                  <h4><a href='#'>{{i['bookname']}}</a></h4>    <!-----------SEND ME THE LOCATION OF THE FILES------------>
+                  <h4><a href="{{i['location']}}">{{i['bookname']}}</a></h4>    <!-----------SEND ME THE LOCATION OF THE FILES------------>
                   <h4><small>{{i['author']}}</small></h4>
-                  <small>{{i['extension']}}</small><br>
+                  <small>{{i['extension'].upper()}}</small><br>
                   <small>English</small><br>
-                  <small>Source</small><br>
+                  <small>{{i['source']}}</small><br>
                 </div>
                 {% endfor %}
 
               </div>
             </div>
 
-             <div class="col-sm-4">
+             <div class="col-sm-3">
               <h5>Youtube Search Results</h5>
 
-
+              {% for i in content['youtube'] %}
+              <!--<p>{{i}}</p>-->
               <div class="card">
-                    <img class="card-img-top" src="https://i.ytimg.com/vi/54XHDUOHuzU/hqdefault.jpg" alt="Click to go to the Link"> <!-- thumbnail_url -->
+                    <img class="card-img-top" src="{{i['thumbnail_url']}}"" alt="Click to go to the Link"> <!-- thumbnail_url -->
                     <div class="card-block p-3">
-                        <h5 class="card-title"><a href='http://www.youtube.com/watch?v=54XHDUOHuzU'>Future Crew - Second Reality demo - HD</a></h5> <!-- title & href=url-->
-                        <p class="card-text">Pascal Brax</p> <!-- author_name -->
+                        <h5 class="card-title"><a href="{{i['url']}}">{{i['title']}}</a></h5> <!-- title & href=url-->
+                        <p class="card-text">{{i['author']}}</p> <!-- author-->
+                        <hr>
                     </div>
                 </div>
+                {% endfor %}
 
 
             </div>
