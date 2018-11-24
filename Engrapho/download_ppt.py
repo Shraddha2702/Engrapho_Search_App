@@ -59,7 +59,7 @@ def download_images(opf, output_folder, HEADERS, url, name):
         except Exception as e:
             print('Failed to download because of', e)
         i += 1
-        os.sleep(100) #0.1 second
+        #sleep(100) #0.1 second
     return dd
 
 

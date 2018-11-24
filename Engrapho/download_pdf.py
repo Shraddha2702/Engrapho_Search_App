@@ -10,13 +10,13 @@ from docx.shared import Inches
 import PyPDF2 as pypdf2
 import json
 
-HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'}
+#HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.110 Safari/537.36'}
 
 
 #Name, Author, Year, Source, Type, Link
 
 def get_urls(url, location):
-    request = requests.get(url, HEADERS)
+    request = requests.get(url)#, HEADERS)
     soup = BeautifulSoup(request.content, "html.parser")
 
     meta_data = dict()
