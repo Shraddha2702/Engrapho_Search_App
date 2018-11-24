@@ -56,7 +56,7 @@ def search():
         locations=[]
         # Searching the inverted indexes.
         for i in search_items:
-            cursor = collection_inverted.find({'index':i})
+            cursor = collection_inverted.find({'index':i}) if i else []
             for j in cursor:
                 ids = ids+j['ids']
         ids = list(set(ids))
