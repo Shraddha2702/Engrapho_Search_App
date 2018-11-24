@@ -84,6 +84,7 @@ def download(urls, path):
             print("Downloaded", name)
         except Exception as e:
             print("Failed to download because of", e)
+        os.sleep(1000) #1 Second
     os.chdir(old_dir)
 
 
