@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap Example</title>
+  <title>Engrapho Web App</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -27,13 +27,35 @@
       background-attachment:fixed;
       background-size: cover;
     }
+
+    .s003 {
+        width: -webkit-fill-available;
+    }
+
+    .s003 form {
+    margin: auto;
+    width: 100%;
+    margin-bottom: 30px;
+    margin-top: 20px;
+    }
+
+
     body {
       padding: 10px;
     }
     /* Add a gray background color and some padding to the footer */
     footer {
       background-color: #f2f2f2;
-      padding: 25px;
+      padding-left: : 25px;
+    }
+
+    .well {
+      text-align: left;
+    }
+
+    .card-img-top {
+      height: 150px;
+      width: 350px;
     }
   </style>
 
@@ -47,24 +69,11 @@
   </div>
 </div>
 
-<div class="s003" style="min-height: 0px; background-color: #fff">
-      <form action="{{url_for('search')}}" method="POST">
-        <div class="inner-form">
-          <div class="input-field first-wrap">
-            <div class="input-select">
-              <select data-trigger="" name="choices-single-defaul" multiple>
-                <option placeholder="">Category</option>
-                <option>Pdf</option>
-                <option>Djvu</option>
-                <option>Epub</option>
-                <option>Docx</option>
-                <option>Pptx</option>
-                <option>mp3</option>
-              </select>
-            </div>
-          </div>
+<div class="s003" style="display: inline-block; min-height: 0px; background-color: #fff">
+      <form action="{{url_for('search')}}" method="POST" style="display: inline;">
+        <div class="inner-form" style="margin-bottom: 25px;">
           <div class="input-field second-wrap">
-            <input id="search" name="search" type="text" placeholder="Enter Keywords?" />
+            <input id="search" name="search" type="text" placeholder="Enter Keywords?" required>
           </div>
           <div class="input-field third-wrap">
             <a href="javascript:;" onclick="add_details()">
@@ -76,56 +85,72 @@
           </a>
           </div>
         </div>
-      </form>
-     </div>
+      <!--</form>
+
+      <form style="max-width: inherit;">-->
+
+        <div class="container-fluid text-center">
+          <div class="row" style="display: flex;">
+
+            <div class="col-sm-2 well" style="width: auto;">
+              <h5>Filters</h5><br>
+              <div class="well">
+                <p><a href="#">Keywords</a></p>
+                {% for i in content['extensions'] %}
+                  <div class="checkbox" name="sub-extensions">
+                    <label><input type="checkbox" value="{{i}}" name="extensions">{{i}}</label>
+                  </div>
+                  {% endfor %}
+                </div>
+              <div class="well">
+                <p><a href="#">Authors</a></p>
+                {% for i in content['authors'] %}
+                  <div class="checkbox" name="sub-author">
+                    <label><input type="checkbox" value="{{i}}" name="authors">{{i}}</label>
+                  </div>
+                  {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-sm-6 text-left">
+              <p>Here, are your search Query Results below.</p>
+              <p>You can also filter based on your requirements.</p>
+
+              <div class='list-group'>
+
+                {% for i in content['messages'] %}
+                <div class="list-group-item">
+                  <h4><a href='#'>{{i['bookname']}}</a></h4>
+                  <h4><small>{{i['author']}}</small></h4>
+                  <small>{{i['extension']}}</small><br>
+                  <small>Language</small><br>
+                  <small>Source</small><br>
+                </div>
+                {% endfor %}
+
+              </div>
+            </div>
+
+             <div class="col-sm-4">
+              <h5>Youtube Search Results</h5>
+
+
+              <div class="card">
+                    <img class="card-img-top" src="https://i.ytimg.com/vi/54XHDUOHuzU/hqdefault.jpg" alt="Click to go to the Link"> <!-- thumbnail_url -->
+                    <div class="card-block p-3">
+                        <h5 class="card-title"><a href='http://www.youtube.com/watch?v=54XHDUOHuzU'>Future Crew - Second Reality demo - HD</a></h5> <!-- title & href=url-->
+                        <p class="card-text">Pascal Brax</p> <!-- author_name -->
+                    </div>
+                </div>
+
+
+            </div>
+        </div><br><br>
+
+
+     </div></form>
    <br>
 
-<form>
-<div class="container-fluid text-center">
-  <div class="row">
-    <div class="col-sm-2 well">
-      <p>Filters</p><br>
-      <div class="well">
-        <p><a href="#">Keywords</a></p>
-          <div class="checkbox" name="sub-topic">
-            <label><input type="checkbox" value="">Machine learning</label>
-          </div>
-          <div class="checkbox" name="sub-topic">
-            <label><input type="checkbox" value="">Deep Learning</label>
-          </div>
-          <div class="checkbox" name="sub-topic">
-            <label><input type="checkbox" value="" disabled>Supervised</label>
-          </div>
-          <div class="checkbox" name="sub-topic">
-            <label><input type="checkbox" value="" disabled>Genetic Algorithms</label>
-          </div>
-        </div>
-      <div class="well">
-        <p><a href="#">Authors</a></p>
-          <div class="checkbox" name="sub-author">
-            <label><input type="checkbox" value="">Goldberg Holland</label>
-          </div>
-          <div class="checkbox" name="sub-author">
-            <label><input type="checkbox" value="">James Wells</label>
-          </div>
-          <div class="checkbox" name="sub-author">
-            <label><input type="checkbox" value="" disabled>Ion Goodfellow</label>
-          </div>
-        </div>
-    </div>
-
-    <div class="col-sm-10 text-left">
-      <h3>Hello, Welcome to the Site!</h3>
-      <p>Here, are your search Query Results below.</p>
-      <p>You can also filter based on your requirements.</p>
-      <div class="list-group">
-      {% for i in content %}
-      <br>
-      <a href="{{i}}" class="list-group-item" download>{{i}}</a>
-      {% endfor %}
-      </div>
-    </div>
-</div><br><br>
 
 <script type="text/javascript" src="{{url_for('static',filename='choices.js')}}"></script>
 <script>
@@ -138,6 +163,7 @@
 
 <script>
 function add_details(){
+alert('show');
 }
 </script>
 
