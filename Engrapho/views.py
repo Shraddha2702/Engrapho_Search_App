@@ -9,6 +9,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(16)
 UPLOAD_FOLDER ='Files'
 ALLOWED_EXTENSIONS = ['docx', 'pptx', 'mp3', 'pdf', 'epub', 'djvu']
+
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["XML_FILE"]='project_index.xml'
 db = MongoClient('localhost',27017).test_database
@@ -16,16 +17,18 @@ collection_main = db.test_collection
 collection_inverted = db.test_inverted_collection
 
 @app.route('/',methods=["POST","GET"])
-
 #Display the search page.
 def display():
     content={}
     if 'messages' in session:
-        content=session['messages']
+        content['messages']=session['messages']
+        content['extensions']=session['extensions']
+        content['authors']=session['authors']
+    print(content)
     return render_template('index.html', content=content)
 
-@app.route('/login',methods=["POST","GET"])
 
+@app.route('/login',methods=["POST","GET"])
 #Display Login page.
 def login():
     if request.method == "POST":
@@ -36,28 +39,53 @@ def login():
 
 
 @app.route('/search', methods=["POST", "GET"])
-
 # This function searches for the given keyword.
 def search():
     if request.method == 'POST':
         #The search process is done here.
         search_items = request.form['search'].strip().split(' ')
         print(search_items)
+        print('---------------'+"extensions"+'----------------')
+        file_extensions = request.form.getlist('extensions')
+        print(file_extensions)
+        print('---------------'+"authors"+'----------------')
+        file_authors = request.form.getlist('authors')
+        print(file_authors)
+
         ids=[]
         locations=[]
-        file_types_selected = request.form.getlist('choices-single-defaul')
+        # Searching the inverted indexes.
         for i in search_items:
             cursor = collection_inverted.find({'index':i})
             for j in cursor:
                 ids = ids+j['ids']
         ids = list(set(ids))
         print(ids)
+        extensions = set()
+        authors = set()
+        #Searching the main table.
         for i in ids:
             cursor = collection_main.find({'_id':i})
             for j in cursor:
-                locations.append(str(j['location']))
+                print('PRINTING THE CURSOR--------')
+                print(j)
+                j.pop('_id')
+                extensions.add(j['extension'])
+                authors.add(j['author'])
+                # Checking if the file_extensions are checked.
+                if file_extensions or file_authors:
+                    if (file_extensions and j['extension'] in file_extensions) or (file_authors and j['author'] in file_authors):
+                        print('DOING IF EXTENSIONS')
+                        locations.append(j)
+                else:
+                    print('DOING ELSE')
+                    locations.append(j)
         session['messages']=locations
-        print(locations)
+        session['extensions']=list(extensions)
+        session['authors']=list(authors)
+        print('---'*10+'messages')
+        print(session['messages'])
+        print('--'*10)
     return redirect(url_for('display'))
 
 @app.route('/add',methods=["POST","GET"])
