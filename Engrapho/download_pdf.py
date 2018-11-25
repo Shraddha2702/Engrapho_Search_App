@@ -1,4 +1,4 @@
-import urllib.request as urllib2
+import urllib2
 import requests
 from bs4 import BeautifulSoup
 from time import sleep

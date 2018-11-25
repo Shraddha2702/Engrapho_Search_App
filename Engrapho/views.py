@@ -104,6 +104,7 @@ def search():
 
         session['sources']=list(set(sources))
 
+        
         ############YOUTUBE AND EBOOK PART
         topic = '+'.join(term.lower().split(' '))
 

@@ -1,4 +1,4 @@
-import urllib
+import urllib2
 import requests
 from bs4 import BeautifulSoup
 from time import sleep
@@ -55,7 +55,9 @@ def download_images(opf, output_folder, HEADERS, url, name):
     for image in images:
         try:
             image_url = image.get('data-full').split('?')[0]
-            urllib.request.urlretrieve(image_url, os.path.join(output_folder, 'ab'+str(i)+'.png'))
+            res - urllib2.urlopen(image_url).read()
+            with open(os.path.join(output_folder, 'ab'+str(i)+'.png'), 'wb') as png:
+                png.write(res)
         except Exception as e:
             print('Failed to download because of', e)
         i += 1
@@ -88,6 +90,7 @@ def delete_images(output_folder):
     for file in os.listdir(output_folder):
         if(file.endswith('png')):
             os.remove(os.path.join(output_folder, file))
+
 
 def main():
     parser = argparse.ArgumentParser()
