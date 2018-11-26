@@ -37,6 +37,7 @@ def display():
         content['sources']=s['sources']
         content['search'] = s['search'] if 'search' in s else ''
 
+
     # print('---'*50+'display')
     # print(content)
     return render_template('index.html', content=content)
@@ -106,6 +107,8 @@ def search():
         s['messages']=locations
         s['extensions']=list(extensions) if 'extensions' not in s else s['extensions']
         s['authors']=list(authors) if 'authors' not in s else s['authors']
+        for each in s['messages']:
+            each['location'] = os.path.join(os.getcwd(),each['location'])
         print(locations)
         print('--'*10)
         print(s['messages'])
@@ -134,7 +137,12 @@ def search():
         base_url2 = 'https://worldcat.org'
         ebook_url = 'https://www.worldcat.org/search?qt=worldcat_org_all&q='+topic+'#%2528x0%253Abook%2Bx4%253Adigital%2529format'
 
-        dic_ebook,sources_ebook,authors_ebook = ebook_inf(ebook_url, base_url2) if not file_extensions or 'eBook' in file_extensions else []
+        if not file_extensions or 'eBook' in file_extensions:
+             dic_ebook,sources_ebook,authors_ebook = ebook_inf(ebook_url, base_url2)
+        else:
+            dic_ebook = []
+            sources_ebook=[]
+            authors_ebook=[]
         i=0
         ans=[]
         while i<len(dic_ebook):
@@ -152,13 +160,6 @@ def search():
         for one in book:
             s['extensions'].append(one)
 
-        # autt = list(set([each['author'] for each in dic_ebook]))
-        # for two in autt:
-        #     s['authors'].append(two)
-        #
-        # sour = list(set(each['source'] for each in dic_ebook))
-        # for three in sour:
-        #     s['sources'].append(three)
         s['sources'] = [i for i in sources_ebook]
         s['authors'] += authors_ebook
 
@@ -200,7 +201,7 @@ def add_documents():
                 pdf_to_get = PdfFileReader(f)
                 file_info = pdf_to_get.getDocumentInfo()
                 print(file_info)
-                meta_data['author']=file_info['/Author'] if '/Author' in file_info else ''
+                meta_data['author']=file_info['/Author'] if '/Author' in file_info else None
                 meta_data['bookname']=file_info['/Title'] if '/Title' in file_info else os.path.basename(f.name).split('.')[0]
                 print(meta_data)
         if extension=='docx' or extension=='docs' or extension=='doc':
@@ -213,7 +214,7 @@ def add_documents():
                 else:
                     meta_data['author'] = ''
                 if doc.xpath('//dc:title', namespaces=ns)[0].text:
-                    meta_data['bookname'] = doc.xpath('//dc:title', namespaces=ns)[0].text
+                    meta_data['bookname'] = doc.xpath('//dc:title', namespaces=ns)[0].text if doc.xpath('//dc:title', namespaces=ns)[0].text else None
                 else:
                     meta_data['bookname'] = os.path.basename(meta_data['location']).split('.')[0]
 
