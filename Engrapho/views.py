@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, g
+from flask import Flask, render_template, request, redirect, url_for, session, g, send_from_directory
 from werkzeug import secure_filename
 from lxml import etree
 from PyPDF2 import PdfFileReader
@@ -17,7 +17,6 @@ ALLOWED_EXTENSIONS = ['docx', 'pptx', 'mp3', 'pdf', 'epub', 'djvu']
 s = {}
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-app.config["XML_FILE"]='project_index.xml'
 db = MongoClient('localhost',27017).test_database
 collection_main = db.test_collection
 collection_inverted = db.test_inverted_collection
@@ -37,6 +36,13 @@ def display():
         content['sources']=s['sources']
         content['search'] = s['search'] if 'search' in s else ''
         # print(content['extensions'])
+
+    #### Just to Test.
+    print('\n'*10)
+    # f = open(os.path.join(os.getcwd(),app.config['UPLOAD_FOLDER'],'Completion.pdf'),'rb')
+    print(os.path.join(os.getcwd(),app.config['UPLOAD_FOLDER']))
+    # print(f.readline())
+    print('\n'*10)
 
 
     # #print('---'*50+'display')
@@ -108,11 +114,11 @@ def search():
         s['messages']=locations
         s['extensions']=list(extensions) if 'extensions' not in s else s['extensions']
         s['authors']=list(authors) if 'authors' not in s else s['authors']
-        for each in s['messages']:
-            each['location'] = os.path.join('static', each['location'])
-        #print(locations)
-        #print('--'*10)
-        #print(s['messages'])
+        # for each in s['messages']:
+        #     each['location'] = os.path.join(os.getcwd(),each['location'])
+        print(locations)
+        print('--'*10)
+        print(s['messages'])
 
         sources = []
         for i in range(len(s['messages'])):
@@ -197,6 +203,7 @@ def add_documents():
         meta_data={'location':location,
                     'extension':extension
                     }
+        meta_data['location'] = meta_data['location'].split('\\')[-1]
         if extension=='pdf':
             #print(location)
             with open(location,'rb') as f:
@@ -222,16 +229,14 @@ def add_documents():
 
         ########################## --------------- ADD CODE FOR PPTX Files To EXTRACT DATA
         ########################## --------------- ALSO, SEARCH FOR META-DATA FILE WHEN ADDING DATA
-        print('--'*10)
-        print(meta_data)
 
         createOrUpdateBook(meta_data)
 
     if "logged_in" in session and session["logged_in"]:
         if request.method == "POST":
             for f in request.files.getlist("documents"):
-                location=os.path.join(app.config["UPLOAD_FOLDER"],f.filename)
-                #print(location)
+                location=os.path.join(app.config['UPLOAD_FOLDER'],f.filename)
+                print(location)
                 f.save(location)
                 extractData(location.split('.')[-1],location)
                 #print("add is executed")
@@ -239,10 +244,11 @@ def add_documents():
     else:
         return redirect(url_for('login'))
 
-# @app.route('/Files/<path:filename>', methods=['GET', 'POST'])
-# def download(filename):
-#     print(filename)
-#     return '<embed src="Files/'+ filename +'"type="application/pdf" width="100%" height="600px" />'
+@app.route('/download/<filename>', methods=['GET', 'POST'])
+def download(filename):
+    # print(filename)
+    # return '<embed src="Files/'+ filename +'"type="application/pdf" width="100%" height="600px" />'
+    return send_from_directory(app.config['UPLOAD_FOLDER'],filename, as_attachment=True)
 
 if __name__ == "__main__":
     app.debug=True
