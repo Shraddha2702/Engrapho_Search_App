@@ -77,8 +77,8 @@ def ebook_inf(url2, base_url2):
 	for publish in soup2.find_all(class_='publisher'):
 	    sources.append(publish.get_text()[11:])
 
-	#print(len(names), len(authors), len(years), len(sources), len(links))
-	for i in range(len(authors)):
+	run = min(len(names), len(authors), len(years), len(sources), len(links))
+	for i in range(run):
 		dd = dict()
 		dd['bookname'] = names[i]
 		dd['author'] = authors[i]
