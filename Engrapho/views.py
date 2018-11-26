@@ -229,7 +229,7 @@ def add_documents():
             for f in request.files.getlist("documents"):
                 location=os.path.join(app.config["UPLOAD_FOLDER"],f.filename)
                 print(location)
-                f.save(location)
+                f.save(os.path.join(os.getcwd(),location).encode())
                 extractData(location.split('.')[-1],location)
                 print("add is executed")
         return render_template('add_documents.html')
@@ -239,4 +239,4 @@ def add_documents():
 
 if __name__ == "__main__":
     app.debug=True
-    app.run()
+    app.run(host='0.0.0.0', port=80)

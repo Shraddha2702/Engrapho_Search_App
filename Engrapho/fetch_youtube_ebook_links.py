@@ -10,7 +10,7 @@ HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KH
 
 
 def youtube_inf(url, base_url):
-	request = requests.get(url, HEADERS)
+	request = requests.get(url)
 	soup = BeautifulSoup(request.content, 'html.parser')
 
 	youtube_urls = []
@@ -48,7 +48,7 @@ def youtube_inf(url, base_url):
 
 #EBooks
 def ebook_inf(url2, base_url2):
-	request2 = requests.get(url2, HEADERS)
+	request2 = requests.get(url2)
 	soup2 = BeautifulSoup(request2.content, 'html.parser')
 
 	names = []
