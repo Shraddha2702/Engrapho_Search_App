@@ -92,7 +92,8 @@
           <div class="row" style="display: flex;">
 
             <div class="col-sm-3 well">
-              <h4>Filters</h4><br>
+              <h4>Filters</h4>
+              <button class="filter_button "type="submit">Apply</button><br>
               <div class="well">
                 <p><a href="#">File Type</a></p>
                 {% for i in content['extensions'] %}
@@ -133,7 +134,7 @@
 
                 {% for i in content['messages'] %}
                 <div class="list-group-item">
-                  <h4><a href="{{i['location']}}" download>{{i['bookname']}}</a></h4>    <!-----------SEND ME THE LOCATION OF THE FILES------------>
+                  <a href="#" onclick='myFunction("stackoverflow.com")'><h4>{{i['bookname']}}</h4></a>    <!-----------SEND ME THE LOCATION OF THE FILES------------>
                   <h4><small>{{i['author']}}</small></h4>
                   <small>{{i['extension'].upper()}}</small><br>
                   <small>English</small><br>
@@ -151,7 +152,7 @@
               {% for i in content['youtube'] %}
               <!--<p>{{i}}</p>-->
               <div class="card">
-                    <img class="card-img-top" src="{{i['thumbnail_url']}}"" alt="Click to go to the Link"> <!-- thumbnail_url -->
+                    <img class="card-img-top" src="{{i['thumbnail_url']}}" alt="Click to go to the Link">
                     <div class="card-block p-3">
                         <h5 class="card-title"><a href="{{i['url']}}">{{i['title']}}</a></h5> <!-- title & href=url-->
                         <p class="card-text">{{i['author']}}</p> <!-- author-->
@@ -176,6 +177,12 @@
     searchEnabled: false,
     itemSelectText: '',
   });
+</script>
+
+<script>
+function myFunction(var s) {
+    window.location.href = s;
+}
 </script>
 
 

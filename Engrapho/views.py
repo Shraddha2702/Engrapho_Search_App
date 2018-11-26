@@ -36,6 +36,7 @@ def display():
         content['ebook']=s['ebook']
         content['sources']=s['sources']
         content['search'] = s['search'] if 'search' in s else ''
+        # print(content['extensions'])
 
 
     # print('---'*50+'display')
@@ -61,7 +62,7 @@ def search():
         #The search process is done here.
         term = request.form['search'].strip()
         s['search'] = request.form['search'] if request.form['search'] else ''
-        search_items = request.form['search'].strip().split(' ')
+        search_items = [i.lower() for i in request.form['search'].strip().split(' ')]
         print(search_items, s['search'])
         print('---------------'+"extensions"+'----------------')
 
@@ -179,6 +180,7 @@ def add_documents():
         indexes = meta_data['bookname'].split(' ') + meta_data['author'].split(' ') #+ meta_data['subtype'].split(' ')
         print("the indexes are", indexes)
         for i in indexes:
+            i = i.lower()
             collection_inverted.update({'index':i},{'$push':{'ids':{'$each':[id]}}},True)
 
 
@@ -201,7 +203,7 @@ def add_documents():
                 pdf_to_get = PdfFileReader(f)
                 file_info = pdf_to_get.getDocumentInfo()
                 print(file_info)
-                meta_data['author']=file_info['/Author'] if '/Author' in file_info else None
+                meta_data['author']=file_info['/Author'] if '/Author' in file_info else ''
                 meta_data['bookname']=file_info['/Title'] if '/Title' in file_info else os.path.basename(f.name).split('.')[0]
                 print(meta_data)
         if extension=='docx' or extension=='docs' or extension=='doc':
@@ -214,7 +216,7 @@ def add_documents():
                 else:
                     meta_data['author'] = ''
                 if doc.xpath('//dc:title', namespaces=ns)[0].text:
-                    meta_data['bookname'] = doc.xpath('//dc:title', namespaces=ns)[0].text if doc.xpath('//dc:title', namespaces=ns)[0].text else None
+                    meta_data['bookname'] = doc.xpath('//dc:title', namespaces=ns)[0].text if doc.xpath('//dc:title', namespaces=ns)[0].text else ''
                 else:
                     meta_data['bookname'] = os.path.basename(meta_data['location']).split('.')[0]
 
@@ -236,6 +238,10 @@ def add_documents():
     else:
         return redirect(url_for('login'))
 
+# @app.route('/Files/<path:filename>', methods=['GET', 'POST'])
+# def download(filename):
+#     print(filename)
+#     return '<embed src="Files/'+ filename +'"type="application/pdf" width="100%" height="600px" />'
 
 if __name__ == "__main__":
     app.debug=True
