@@ -30,15 +30,15 @@ def display():
     print(s.keys())
     if 'messages' in s:
         content['messages']=s['messages']
-        content['extensions']=s['extensions']
-        content['authors']=s['authors']
+        content['extensions']=list(set(s['extensions']))
+        content['authors']=list(set(s['authors']))
         content['youtube']=s['youtube']
         content['ebook']=s['ebook']
         content['sources']=s['sources']
         content['search'] = s['search'] if 'search' in s else ''
 
-    print('---'*50+'display')
-    print(content)
+    # print('---'*50+'display')
+    # print(content)
     return render_template('index.html', content=content)
 
 
@@ -56,7 +56,6 @@ def login():
 # This function searches for the given keyword.
 def search():
     global s
-    s={}
     if request.method == 'POST':
         #The search process is done here.
         term = request.form['search'].strip()
@@ -64,11 +63,16 @@ def search():
         search_items = request.form['search'].strip().split(' ')
         print(search_items, s['search'])
         print('---------------'+"extensions"+'----------------')
+
         file_extensions = request.form.getlist('extensions')
+
         print(file_extensions)
         print('---------------'+"authors"+'-------------------')
         file_authors = request.form.getlist('authors')
         print(file_authors)
+        print('---------------'+'sources'+'----------------------------------')
+        file_sources = request.form.getlist('sources')
+        print(file_sources)
 
         ids=[]
         locations=[]
@@ -100,8 +104,8 @@ def search():
                     print('DOING ELSE')
                     locations.append(j)
         s['messages']=locations
-        s['extensions']=list(extensions)
-        s['authors']=list(authors)
+        s['extensions']=list(extensions) if 'extensions' not in s else s['extensions']
+        s['authors']=list(authors) if 'authors' not in s else s['authors']
         print(locations)
         print('--'*10)
         print(s['messages'])
@@ -129,22 +133,34 @@ def search():
         ## CHECK BOX ENABLED... CHANGE
         base_url2 = 'https://worldcat.org'
         ebook_url = 'https://www.worldcat.org/search?qt=worldcat_org_all&q='+topic+'#%2528x0%253Abook%2Bx4%253Adigital%2529format'
-        dic_ebook = ebook_inf(ebook_url, base_url2)
+
+        dic_ebook,sources_ebook,authors_ebook = ebook_inf(ebook_url, base_url2) if not file_extensions or 'eBook' in file_extensions else []
+        i=0
+        ans=[]
+        while i<len(dic_ebook):
+            if (file_authors and dic_ebook[i]['author'] in file_authors) or (file_sources and dic_ebook[i]['source'] in file_sources):
+                print(dic_ebook[i]['bookname'])
+                ans.append(dic_ebook[i])
+            i+=1
+        dic_ebook = [i for i in ans] if file_authors or file_sources else [i for i in dic_ebook]
+        print(dic_ebook)
         print('ebook added to s')
         s['ebook'] = dic_ebook
-        s['messages'] += dic_ebook
+        s['messages'] = locations + dic_ebook
 
         book = list(set([each['extension'] for each in dic_ebook]))
         for one in book:
             s['extensions'].append(one)
 
-        autt = list(set([each['author'] for each in dic_ebook]))
-        for two in autt:
-            s['authors'].append(two)
-
-        sour = list(set(each['source'] for each in dic_ebook))
-        for three in sour:
-            s['sources'].append(three)
+        # autt = list(set([each['author'] for each in dic_ebook]))
+        # for two in autt:
+        #     s['authors'].append(two)
+        #
+        # sour = list(set(each['source'] for each in dic_ebook))
+        # for three in sour:
+        #     s['sources'].append(three)
+        s['sources'] = [i for i in sources_ebook]
+        s['authors'] += authors_ebook
 
         #################################### --------------- Add PPT Section and
         #################################### --------------- Replace Empty string with 'Not Available'

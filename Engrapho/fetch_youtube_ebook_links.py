@@ -37,7 +37,7 @@ def youtube_inf(url, base_url):
 			dd['url'] = info['url']
 			meta_data.append(dd)
 		except:
-			print('Error')
+			pass
 
 	#ret_dict = {'meta': meta_data}
 	#print(youtube_video_infos)
@@ -92,7 +92,7 @@ def ebook_inf(url2, base_url2):
 	#return_dic = {'meta': meta_data}
 	#with open('metadata_ebook.json', 'w') as file:
 	#    file.write(json.dumps(return_dic))
-	return meta_data
+	return meta_data, sources, authors
 
 
 
