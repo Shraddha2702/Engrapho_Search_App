@@ -4,11 +4,17 @@ from lxml import etree
 from PyPDF2 import PdfFileReader
 from pymongo import MongoClient
 import os, subprocess, sys, docx
+import requests
+from bs4 import BeautifulSoup
+import micawber
+
+from fetch_youtube_ebook_links import *
 
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
 UPLOAD_FOLDER ='Files'
 ALLOWED_EXTENSIONS = ['docx', 'pptx', 'mp3', 'pdf', 'epub', 'djvu']
+s = {}
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["XML_FILE"]='project_index.xml'
@@ -19,11 +25,19 @@ collection_inverted = db.test_inverted_collection
 @app.route('/',methods=["POST","GET"])
 #Display the search page.
 def display():
-    content={}
-    if 'messages' in session:
-        content['messages']=session['messages']
-        content['extensions']=session['extensions']
-        content['authors']=session['authors']
+    global s
+    content={'search':''}
+    print(s.keys())
+    if 'messages' in s:
+        content['messages']=s['messages']
+        content['extensions']=s['extensions']
+        content['authors']=s['authors']
+        content['youtube']=s['youtube']
+        content['ebook']=s['ebook']
+        content['sources']=s['sources']
+        content['search'] = s['search'] if 'search' in s else ''
+
+    print('---'*50+'display')
     print(content)
     return render_template('index.html', content=content)
 
@@ -41,14 +55,18 @@ def login():
 @app.route('/search', methods=["POST", "GET"])
 # This function searches for the given keyword.
 def search():
+    global s
+    s={}
     if request.method == 'POST':
         #The search process is done here.
+        term = request.form['search'].strip()
+        s['search'] = request.form['search'] if request.form['search'] else ''
         search_items = request.form['search'].strip().split(' ')
-        print(search_items)
+        print(search_items, s['search'])
         print('---------------'+"extensions"+'----------------')
         file_extensions = request.form.getlist('extensions')
         print(file_extensions)
-        print('---------------'+"authors"+'----------------')
+        print('---------------'+"authors"+'-------------------')
         file_authors = request.form.getlist('authors')
         print(file_authors)
 
@@ -68,24 +86,72 @@ def search():
             cursor = collection_main.find({'_id':i})
             for j in cursor:
                 print('PRINTING THE CURSOR--------')
-                print(j)
+                #print(j)
                 j.pop('_id')
                 extensions.add(j['extension'])
                 authors.add(j['author'])
                 # Checking if the file_extensions are checked.
                 if file_extensions or file_authors:
+                    print("FOUND AUTHORS OR FILES")
                     if (file_extensions and j['extension'] in file_extensions) or (file_authors and j['author'] in file_authors):
                         print('DOING IF EXTENSIONS')
                         locations.append(j)
                 else:
                     print('DOING ELSE')
                     locations.append(j)
-        session['messages']=locations
-        session['extensions']=list(extensions)
-        session['authors']=list(authors)
-        print('---'*10+'messages')
-        print(session['messages'])
+        s['messages']=locations
+        s['extensions']=list(extensions)
+        s['authors']=list(authors)
+        print(locations)
         print('--'*10)
+        print(s['messages'])
+
+        sources = []
+        for i in range(len(s['messages'])):
+            if(s['messages'][i]['extension'] == 'pdf'):
+                sources.append('Google Scholar')
+                s['messages'][i]['source'] = 'Google Scholar'
+            else:
+                sources.append('LinkedIn Slideshare')
+                s['messages'][i]['source'] = 'LinkedIn Slideshare'
+
+        s['sources']=list(set(sources))
+
+
+        ############YOUTUBE AND EBOOK PART
+        topic = '+'.join(term.lower().split(' '))
+
+        base_url = 'https://youtube.com'
+        youtube_url = 'https://www.youtube.com/results?search_query='+topic
+        dic_yt = youtube_inf(youtube_url, base_url)
+        print('youtube added to s')
+        s['youtube'] = dic_yt
+        ## CHECK BOX ENABLED... CHANGE
+        base_url2 = 'https://worldcat.org'
+        ebook_url = 'https://www.worldcat.org/search?qt=worldcat_org_all&q='+topic+'#%2528x0%253Abook%2Bx4%253Adigital%2529format'
+        dic_ebook = ebook_inf(ebook_url, base_url2)
+        print('ebook added to s')
+        s['ebook'] = dic_ebook
+        s['messages'] += dic_ebook
+
+        book = list(set([each['extension'] for each in dic_ebook]))
+        for one in book:
+            s['extensions'].append(one)
+
+        autt = list(set([each['author'] for each in dic_ebook]))
+        for two in autt:
+            s['authors'].append(two)
+
+        sour = list(set(each['source'] for each in dic_ebook))
+        for three in sour:
+            s['sources'].append(three)
+
+        #################################### --------------- Add PPT Section and
+        #################################### --------------- Replace Empty string with 'Not Available'
+        print('---'*10+'messages')
+        print(s['messages'])
+        #print('--'*10)
+        print('s done === Sending')
     return redirect(url_for('display'))
 
 @app.route('/add',methods=["POST","GET"])
@@ -135,7 +201,8 @@ def add_documents():
                 else:
                     meta_data['bookname'] = os.path.basename(meta_data['location']).split('.')[0]
 
-
+        ########################## --------------- ADD CODE FOR PPTX Files To EXTRACT DATA
+        ########################## --------------- ALSO, SEARCH FOR META-DATA FILE WHEN ADDING DATA
 
 
         createOrUpdateBook(meta_data)
