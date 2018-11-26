@@ -12,7 +12,7 @@ from fetch_youtube_ebook_links import *
 
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
-UPLOAD_FOLDER ='Files'
+UPLOAD_FOLDER = os.path.join('Static', 'Files')
 ALLOWED_EXTENSIONS = ['docx', 'pptx', 'mp3', 'pdf', 'epub', 'djvu']
 s = {}
 
@@ -36,6 +36,7 @@ def display():
         content['ebook']=s['ebook']
         content['sources']=s['sources']
         content['search'] = s['search'] if 'search' in s else ''
+        # print(content['extensions'])
 
 
     # #print('---'*50+'display')
@@ -61,9 +62,9 @@ def search():
         #The search process is done here.
         term = request.form['search'].strip()
         s['search'] = request.form['search'] if request.form['search'] else ''
-        search_items = request.form['search'].strip().split(' ')
-        #print(search_items, s['search'])
-        #print('---------------'+"extensions"+'----------------')
+        search_items = [i.lower() for i in request.form['search'].strip().split(' ')]
+        print(search_items, s['search'])
+        print('---------------'+"extensions"+'----------------')
 
         file_extensions = request.form.getlist('extensions')
 
@@ -90,8 +91,8 @@ def search():
         for i in ids:
             cursor = collection_main.find({'_id':i})
             for j in cursor:
-                #print('#printING THE CURSOR--------')
-                ##print(j)
+                print('#printing THE CURSOR--------')
+                print(j)
                 j.pop('_id')
                 extensions.add(j['extension'])
                 authors.add(j['author'])
@@ -108,19 +109,18 @@ def search():
         s['extensions']=list(extensions) if 'extensions' not in s else s['extensions']
         s['authors']=list(authors) if 'authors' not in s else s['authors']
         for each in s['messages']:
-            each['location'] = os.path.join(os.getcwd(),each['location'])
+            each['location'] = os.path.join('static', each['location'])
         #print(locations)
         #print('--'*10)
         #print(s['messages'])
 
         sources = []
         for i in range(len(s['messages'])):
-            if(s['messages'][i]['extension'] == 'pdf'):
-                sources.append('Google Scholar')
-                s['messages'][i]['source'] = 'Google Scholar'
-            else:
-                sources.append('LinkedIn Slideshare')
-                s['messages'][i]['source'] = 'LinkedIn Slideshare'
+            sources.append('Google Scholar')
+            s['messages'][i]['source'] = 'Google Scholar'
+            #else:
+            #    sources.append('LinkedIn Slideshare')
+            #    s['messages'][i]['source'] = 'LinkedIn Slideshare'
 
         s['sources']=list(set(sources))
 
@@ -160,7 +160,8 @@ def search():
         for one in book:
             s['extensions'].append(one)
 
-        s['sources'] = [i for i in sources_ebook]
+        #s['sources'] = [i for i in sources_ebook]
+        s['sources'] += sources_ebook
         s['authors'] += authors_ebook
 
         #################################### --------------- Add PPT Section and
@@ -177,8 +178,9 @@ def add_documents():
     # This function updates the inverted indexes file.
     def prepocess(meta_data, id):
         indexes = meta_data['bookname'].split(' ') + meta_data['author'].split(' ') #+ meta_data['subtype'].split(' ')
-        #print("the indexes are", indexes)
+        print("the indexes are", indexes)
         for i in indexes:
+            i = i.lower()
             collection_inverted.update({'index':i},{'$push':{'ids':{'$each':[id]}}},True)
 
 
@@ -201,7 +203,7 @@ def add_documents():
                 pdf_to_get = PdfFileReader(f)
                 file_info = pdf_to_get.getDocumentInfo()
                 #print(file_info)
-                meta_data['author']=file_info['/Author'] if '/Author' in file_info else None
+                meta_data['author']=file_info['/Author'] if '/Author' in file_info else ''
                 meta_data['bookname']=file_info['/Title'] if '/Title' in file_info else os.path.basename(f.name).split('.')[0]
                 #print(meta_data)
         if extension=='docx' or extension=='docs' or extension=='doc':
@@ -214,13 +216,14 @@ def add_documents():
                 else:
                     meta_data['author'] = ''
                 if doc.xpath('//dc:title', namespaces=ns)[0].text:
-                    meta_data['bookname'] = doc.xpath('//dc:title', namespaces=ns)[0].text if doc.xpath('//dc:title', namespaces=ns)[0].text else None
+                    meta_data['bookname'] = doc.xpath('//dc:title', namespaces=ns)[0].text if doc.xpath('//dc:title', namespaces=ns)[0].text else ''
                 else:
                     meta_data['bookname'] = os.path.basename(meta_data['location']).split('.')[0]
 
         ########################## --------------- ADD CODE FOR PPTX Files To EXTRACT DATA
         ########################## --------------- ALSO, SEARCH FOR META-DATA FILE WHEN ADDING DATA
-
+        print('--'*10)
+        print(meta_data)
 
         createOrUpdateBook(meta_data)
 
@@ -236,6 +239,10 @@ def add_documents():
     else:
         return redirect(url_for('login'))
 
+# @app.route('/Files/<path:filename>', methods=['GET', 'POST'])
+# def download(filename):
+#     print(filename)
+#     return '<embed src="Files/'+ filename +'"type="application/pdf" width="100%" height="600px" />'
 
 if __name__ == "__main__":
     app.debug=True
