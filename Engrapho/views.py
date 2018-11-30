@@ -1,18 +1,20 @@
 from flask import Flask, render_template, request, redirect, url_for, session, g, send_from_directory
 from werkzeug import secure_filename
 from lxml import etree
+import lxml
 from PyPDF2 import PdfFileReader
 from pymongo import MongoClient
 import os, subprocess, sys, docx
 import requests
 from bs4 import BeautifulSoup
 import micawber
-
+import zipfile
 from fetch_youtube_ebook_links import *
 
 app = Flask(__name__)
 app.secret_key = os.urandom(16)
-UPLOAD_FOLDER = os.path.join('Static', 'Files')
+#UPLOAD_FOLDER = os.path.join('download', 'Downloads', 'Files')
+UPLOAD_FOLDER = os.path.join('static', 'Files')
 ALLOWED_EXTENSIONS = ['docx', 'pptx', 'mp3', 'pdf', 'epub', 'djvu']
 s = {}
 
@@ -74,13 +76,13 @@ def search():
 
         file_extensions = request.form.getlist('extensions')
 
-        #print(file_extensions)
-        #print('---------------'+"authors"+'-------------------')
+        print(file_extensions)
+        print('\n---------------'+"authors"+'-------------------')
         file_authors = request.form.getlist('authors')
-        #print(file_authors)
-        #print('---------------'+'sources'+'----------------------------------')
+        print(file_authors)
+        print('\n---------------'+'sources'+'----------------------------------')
         file_sources = request.form.getlist('sources')
-        #print(file_sources)
+        print(file_sources)
 
         ids=[]
         locations=[]
@@ -209,10 +211,11 @@ def add_documents():
             with open(location,'rb') as f:
                 pdf_to_get = PdfFileReader(f)
                 file_info = pdf_to_get.getDocumentInfo()
-                #print(file_info)
+                print(file_info)
                 meta_data['author']=file_info['/Author'] if '/Author' in file_info else ''
-                meta_data['bookname']=file_info['/Title'] if '/Title' in file_info else os.path.basename(f.name).split('.')[0]
-                #print(meta_data)
+                #meta_data['bookname']=file_info['/Title'] if ('/Title' in file_info and file_info['/Title'] is not "u''") else os.path.basename(f.name).split('.')[0]
+		meta_data['bookname']=os.path.basename(f.name).split('.')[0]
+		print(meta_data['bookname'])
         if extension=='docx' or extension=='docs' or extension=='doc':
             with open(location,'rb') as f:
                 zf = zipfile.ZipFile(location)
@@ -239,16 +242,17 @@ def add_documents():
                 print(location)
                 f.save(os.path.join(os.getcwd(),location).encode())
                 extractData(location.split('.')[-1],location)
-                #print("add is executed")
+                print('--'*50)
+		print("add is executed")
         return render_template('add_documents.html')
     else:
         return redirect(url_for('login'))
 
-@app.route('/download/<filename>', methods=['GET', 'POST'])
-def download(filename):
-    # print(filename)
-    # return '<embed src="Files/'+ filename +'"type="application/pdf" width="100%" height="600px" />'
-    return send_from_directory(app.config['UPLOAD_FOLDER'],filename, as_attachment=True)
+#@app.route('/<filename>', methods=['GET', 'POST'])
+#def download(filename):
+#    # print(filename)
+#    # return '<embed src="Files/'+ filename +'"type="application/pdf" width="100%" height="600px" />'
+#    return send_from_directory(app.config['UPLOAD_FOLDER'],filename, as_attachment=True)
 
 if __name__ == "__main__":
     app.debug=True

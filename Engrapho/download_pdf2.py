@@ -1,4 +1,4 @@
-import urllib.request as urllib2
+import urllib2
 import requests
 from bs4 import BeautifulSoup
 from time import sleep
@@ -77,7 +77,7 @@ def download(urls, path):
             print("Downloaded", name)
         except Exception as e:
             print("Failed to download because of", e)
-        sleep(1000) #1 Second
+        #sleep(1000) #1 Second
     os.chdir(old_dir)
 
 

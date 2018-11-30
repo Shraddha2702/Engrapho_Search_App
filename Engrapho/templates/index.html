@@ -134,7 +134,7 @@
 
                 {% for i in content['messages'] %}
                 <div class="list-group-item">
-                  <a href="/download/{{i['location']}}"><h4>{{i['bookname']}}</h4></a>    <!-----------SEND ME THE LOCATION OF THE FILES------------>
+                  <a href="{{i['location']}}" target='_blank'><h4>{{i['bookname']}}</h4></a>    <!-----------SEND ME THE LOCATION OF THE FILES------------>
                   <h4><small>{{i['author']}}</small></h4>
                   <small>{{i['extension'].upper()}}</small><br>
                   <small>English</small><br>
